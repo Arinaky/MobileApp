@@ -10,4 +10,5 @@
     <string name="e_mail">E-mail</string>
     <string name="back">Back</string>
     <string name="museumapp">MuseumApp</string>
+    <string name="confirm_password">Confirm password</string>
 </resources>

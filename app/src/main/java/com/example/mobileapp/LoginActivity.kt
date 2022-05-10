@@ -26,25 +26,36 @@ class LoginActivity : AppCompatActivity() {
 
         buttonLogin.setOnClickListener {
             dbHandler = DatabaseHandler(this, null)
-            dbHandler!!.insertData("admin", "admin", "admin@admin.com")
             users = dbHandler!!.listOfUserInfo()
+            var errorUsername : Boolean = false
+            var errorPassword : Boolean = false
             for (user in users!!) {
                 if (username.text.toString() == user.username) {
                     if (password.text.toString() == user.password) {
                         Toast.makeText(this, "Login Success", Toast.LENGTH_SHORT).show()
+                        errorUsername = false
+                        errorPassword = false
                         startActivity(Intent(this, MainActivity::class.java))
                         finish()
+                        break
                     } else {
-                        Toast.makeText(this, "Login Fail. Incorrect password", Toast.LENGTH_SHORT).show()
+                        errorPassword = true
+                        break
                     }
                 } else {
-                    Toast.makeText(this, "Login Fail. No such username", Toast.LENGTH_SHORT).show()
+                    errorUsername = true
                 }
+            }
+            if (errorPassword) {
+                Toast.makeText(this, "Login Fail. Incorrect password", Toast.LENGTH_SHORT).show()
+            } else if (errorUsername) {
+                Toast.makeText(this, "Login Fail. No such username", Toast.LENGTH_SHORT).show()
             }
         }
 
         buttonRegistration.setOnClickListener {
-            startActivity(Intent(this, RegistrationActivity::class.java))
+            intent = Intent(this, RegistrationActivity::class.java)
+            startActivity(intent)
         }
     }
 }
