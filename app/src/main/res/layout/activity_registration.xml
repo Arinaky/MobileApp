@@ -9,7 +9,7 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:src="@drawable/Logo"
+        android:src="@drawable/logo"
         android:layout_marginTop="30px"
         android:id="@+id/logo"
         />
@@ -38,7 +38,10 @@
         android:fontFamily="@font/romul"
         android:textColor="#000000"
         android:textColorHint="#E5E5E5"
-        android:layout_margin="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
         android:padding="20dp"
         android:inputType="textEmailAddress"
         />
@@ -54,7 +57,10 @@
     android:hint="Логин"
     android:textColor="#000000"
     android:textColorHint="#E5E5E5"
-    android:layout_margin="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
     android:padding="20dp"
     />
 
@@ -68,7 +74,10 @@
         android:fontFamily="@font/romul"
         android:textColor="#000000"
         android:textColorHint="#E5E5E5"
-        android:layout_margin="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
         android:padding="20dp"
         android:inputType="textPassword"
         />
@@ -83,7 +92,10 @@
         android:hint="Повторите пароль"
         android:textColor="#000000"
         android:textColorHint="#E5E5E5"
-        android:layout_margin="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="0dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
         android:padding="20dp"
         android:inputType="textPassword"
         />
@@ -93,56 +105,72 @@
         android:layout_height="wrap_content"
         android:id="@+id/button_sign_up"
         android:layout_below="@id/confirm_password"
-        android:text="@string/sign_up"
-        android:backgroundTint="@color/design_default_color_secondary"
+        android:text="Регистрация"
+        android:fontFamily="@font/romul"
+        android:paddingLeft="75dp"
+        android:paddingRight="75dp"
+        android:backgroundTint="#DD052B"
         android:layout_centerHorizontal="true"
-        android:layout_margin="20dp"
-        />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/button_back_to_sign_in"
-        android:layout_below="@id/button_sign_up"
-        android:text="@string/sign_in"
-        android:backgroundTint="@color/design_default_color_secondary"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="20dp"
-        />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/or_sign_in_with"
-        android:id="@+id/or_sign_in_with"
-        android:textColor="@color/teal_200"
-        android:layout_above="@+id/social"
-        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
         />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/social"
-        android:layout_alignParentBottom="true"
+        android:layout_below="@id/button_sign_up"
         android:gravity="center">
 
-        <ImageView
-            android:layout_height="48dp"
-            android:layout_width="48dp"
-            android:layout_margin="20dp"
-            android:id="@+id/google_btn"
-            android:src="@drawable/google"
-            />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Войти через: "
+        android:id="@+id/or_sign_in_with"
+        android:textColor="#000000"
+        android:fontFamily="@font/romul"
+        android:layout_above="@+id/social"
+        android:layout_centerHorizontal="true"
+        />
 
         <ImageView
-            android:layout_height="48dp"
-            android:layout_width="48dp"
-            android:layout_margin="20dp"
+            android:layout_height="40dp"
+            android:layout_width="40dp"
+            android:layout_margin="10dp"
             android:id="@+id/vk_btn"
             android:src="@drawable/vk"
             />
 
+        <ImageView
+            android:layout_height="40dp"
+            android:layout_width="40dp"
+            android:layout_margin="10dp"
+            android:id="@+id/google_btn"
+            android:src="@drawable/google"
+            />
+
     </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Уже есть аккаунт?"
+        android:fontFamily="@font/romul"
+        android:layout_below="@id/social"
+        android:layout_centerInParent="true"
+        android:textColor="#000000"
+        android:id="@+id/alreadyAccount"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/sign_inn"
+        android:id="@id/sign_in"
+        android:fontFamily="@font/romul"
+        android:textColor="#000000"
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/alreadyAccount"
+        android:layout_centerInParent="true"
+        />
 
 </RelativeLayout>

@@ -48,7 +48,7 @@ class RegistrationActivity : AppCompatActivity() {
         confirmPassword = findViewById<TextView>(R.id.confirm_password)
 
         val buttonSignUp = findViewById<Button>(R.id.button_sign_up)
-        val buttonBack = findViewById<Button>(R.id.button_back_to_sign_in)
+        val buttonBack = findViewById<TextView>(R.id.sign_in)
 
         buttonBack.setOnClickListener {
             finish()

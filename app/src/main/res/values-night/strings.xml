@@ -13,4 +13,5 @@
     <string name="museumapp">MuseumApp</string>
     <string name="confirm_password">Confirm password</string>
     <string name="sign_out">Sign out</string>
+    <string name="sign_inn">Войти</string>
 </resources>
