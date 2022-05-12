@@ -43,10 +43,6 @@ class LoginActivity : AppCompatActivity() {
         val buttonGoogle = findViewById<ImageView>(R.id.google_btn)
         val buttonVK = findViewById<ImageView>(R.id.vk_btn)
 
-        val test = findViewById<TextView>(R.id.test)
-        val fingerprints = getCertificateFingerprint(this, this.packageName)
-        test.text = fingerprints!![0]
-
         gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build()
         gsc = GoogleSignIn.getClient(this, gso)
         val acct : GoogleSignInAccount? = GoogleSignIn.getLastSignedInAccount(this)
