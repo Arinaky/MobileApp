@@ -6,11 +6,16 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.fragment.app.Fragment
+import com.example.mobileapp.fragments.GamesFragment
+import com.example.mobileapp.fragments.HomeFragment
+import com.example.mobileapp.fragments.ProfileFragment
 import com.example.mobileapp.models.UserInfo
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.vk.api.sdk.VK
 import com.vk.api.sdk.auth.VKAccessToken
 
@@ -34,7 +39,11 @@ class MainActivity : AppCompatActivity() {
         gsc = GoogleSignIn.getClient(this, gso)
         val acct : GoogleSignInAccount? = GoogleSignIn.getLastSignedInAccount(this)
 
-        val buttonSignOut = findViewById<Button>(R.id.sign_out)
+        val homeFragment = HomeFragment()
+        val gamesFragment = GamesFragment()
+        val profileFragment = ProfileFragment()
+
+        makeCurrentFragment(homeFragment)
 
         if (acct!=null) {
             var userExist : Boolean = false
@@ -49,8 +58,22 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        /**
+        val buttonSignOut = findViewById<Button>(R.id.sign_out)
+
         buttonSignOut.setOnClickListener {
             signOut()
+        }
+        **/
+
+        val bottomNavigation = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+        bottomNavigation.setOnNavigationItemSelectedListener {
+            when (it.itemId) {
+                R.id.home -> makeCurrentFragment(homeFragment)
+                R.id.games -> makeCurrentFragment(gamesFragment)
+                R.id.profile -> makeCurrentFragment(profileFragment)
+            }
+            true
         }
     }
 
@@ -68,6 +91,13 @@ class MainActivity : AppCompatActivity() {
         } else {
             finish()
             startActivity(Intent(this, LoginActivity::class.java))
+        }
+    }
+
+    fun makeCurrentFragment(fragment : Fragment) {
+        supportFragmentManager.beginTransaction().apply {
+            replace(R.id.fl_wrapper, fragment)
+            commit()
         }
     }
 }

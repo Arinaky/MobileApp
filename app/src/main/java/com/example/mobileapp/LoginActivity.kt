@@ -27,9 +27,9 @@ class LoginActivity : AppCompatActivity() {
 
     var dbHandler: DatabaseHandler? = null
     var users: ArrayList<UserInfo>? = null
-    lateinit var gso : GoogleSignInOptions
-    lateinit var gsc : GoogleSignInClient
-    lateinit var buttonGoogle : ImageView
+    lateinit var gso: GoogleSignInOptions
+    lateinit var gsc: GoogleSignInClient
+    lateinit var buttonGoogle: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,26 +40,12 @@ class LoginActivity : AppCompatActivity() {
 
         val buttonLogin = findViewById<Button>(R.id.button_login)
         val buttonRegistration = findViewById<Button>(R.id.button_registration)
-        val buttonGoogle = findViewById<ImageView>(R.id.google_btn)
-        val buttonVK = findViewById<ImageView>(R.id.vk_btn)
-
-        gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build()
-        gsc = GoogleSignIn.getClient(this, gso)
-        val acct : GoogleSignInAccount? = GoogleSignIn.getLastSignedInAccount(this)
-
-        if (acct!=null) {
-            toMainPage()
-        }
-
-        if (VK.isLoggedIn()) {
-            toMainPage()
-        }
 
         buttonLogin.setOnClickListener {
             dbHandler = DatabaseHandler(this, null)
             users = dbHandler!!.listOfUserInfo()
-            var errorUsername : Boolean = false
-            var errorPassword : Boolean = false
+            var errorUsername: Boolean = false
+            var errorPassword: Boolean = false
             for (user in users!!) {
                 if (username.text.toString() == user.username) {
                     if (password.text.toString() == user.password) {
@@ -84,60 +70,13 @@ class LoginActivity : AppCompatActivity() {
         }
 
         buttonRegistration.setOnClickListener {
+            finish()
             intent = Intent(this, RegistrationActivity::class.java)
             startActivity(intent)
         }
-
-        buttonGoogle.setOnClickListener {
-            googleSignIn()
-        }
-
-        buttonVK.setOnClickListener {
-            VK.login(this, arrayListOf(VKScope.WALL, VKScope.PHOTOS))
-        }
     }
-    fun googleSignIn() {
-        val signInIntent : Intent = gsc.signInIntent
-        startActivityForResult(signInIntent, 1000)
-    }
-
     fun toMainPage() {
         finish()
         startActivity(Intent(this, MainActivity::class.java))
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 1000) run {
-            val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(data)
-
-            try {
-                task.getResult(ApiException::class.java)
-                toMainPage()
-            } catch (exception : ApiException) {
-                Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show()
-            }
-        }
-        val callback = object: VKAuthCallback {
-            override fun onLogin(token: VKAccessToken) {
-                toMainPage()
-                var userExist : Boolean = false
-                for (user in users!!) {
-                    if (user.username == token.userId.toString()) {
-                        userExist = true
-                        break
-                    }
-                }
-                if (!userExist) {
-                    dbHandler!!.insertData(token.userId.toString(), null.toString(), token.email.toString())
-                }
-            }
-            override fun onLoginFailed(authException: VKAuthException) {
-                Toast.makeText(this@LoginActivity, "Something went wrong", Toast.LENGTH_SHORT).show()
-            }
-        }
-        if (data == null || !VK.onActivityResult(requestCode, resultCode, data, callback)) {
-            super.onActivityResult(requestCode, resultCode, data)
-        }
     }
 }

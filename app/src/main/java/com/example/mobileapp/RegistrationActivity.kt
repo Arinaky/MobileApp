@@ -1,17 +1,30 @@
 package com.example.mobileapp
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import com.example.mobileapp.FieldValidators.isStringContainNumber
 import com.example.mobileapp.FieldValidators.isStringLowerAndUpperCase
 import com.example.mobileapp.models.UserInfo
 import com.example.mobileapp.FieldValidators.isValidEmail
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.tasks.Task
+import com.vk.api.sdk.VK
+import com.vk.api.sdk.auth.VKAccessToken
+import com.vk.api.sdk.auth.VKAuthCallback
+import com.vk.api.sdk.auth.VKScope
+import com.vk.api.sdk.exceptions.VKAuthException
 
 class RegistrationActivity : AppCompatActivity() {
 
@@ -21,6 +34,9 @@ class RegistrationActivity : AppCompatActivity() {
     private var username: TextView? = null
     private var password: TextView? = null
     private var confirmPassword: TextView? = null
+    lateinit var gso : GoogleSignInOptions
+    lateinit var gsc : GoogleSignInClient
+    lateinit var buttonGoogle : ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +52,7 @@ class RegistrationActivity : AppCompatActivity() {
 
         buttonBack.setOnClickListener {
             finish()
+            startActivity(Intent(this, LoginActivity::class.java))
         }
 
         buttonSignUp.setOnClickListener {
@@ -63,6 +80,28 @@ class RegistrationActivity : AppCompatActivity() {
                     finish()
                 }
             }
+        }
+        val buttonGoogle = findViewById<ImageView>(R.id.google_btn)
+        val buttonVK = findViewById<ImageView>(R.id.vk_btn)
+
+        gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build()
+        gsc = GoogleSignIn.getClient(this, gso)
+        val acct : GoogleSignInAccount? = GoogleSignIn.getLastSignedInAccount(this)
+
+        if (acct!=null) {
+            toMainPage()
+        }
+
+        if (VK.isLoggedIn()) {
+            toMainPage()
+        }
+
+        buttonGoogle.setOnClickListener {
+            googleSignIn()
+        }
+
+        buttonVK.setOnClickListener {
+            VK.login(this, arrayListOf(VKScope.WALL, VKScope.PHOTOS))
         }
     }
 
@@ -138,6 +177,53 @@ class RegistrationActivity : AppCompatActivity() {
         return true
     }
 
+    fun toMainPage() {
+        finish()
+        startActivity(Intent(this, MainActivity::class.java))
+    }
+
+    fun googleSignIn() {
+        val signInIntent : Intent = gsc.signInIntent
+        startActivityForResult(signInIntent, 1000)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 1000) run {
+            val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(data)
+
+            try {
+                task.getResult(ApiException::class.java)
+                Toast.makeText(this, "Login Success", Toast.LENGTH_SHORT).show()
+                toMainPage()
+            } catch (exception : ApiException) {
+                Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show()
+            }
+        }
+        val callback = object: VKAuthCallback {
+            override fun onLogin(token: VKAccessToken) {
+                toMainPage()
+                Toast.makeText(this@RegistrationActivity, "Login Success", Toast.LENGTH_SHORT).show()
+                var userExist : Boolean = false
+                for (user in users!!) {
+                    if (user.username == token.userId.toString()) {
+                        userExist = true
+                        break
+                    }
+                }
+                if (!userExist) {
+                    dbHandler!!.insertData(token.userId.toString(), null.toString(), token.email.toString())
+                }
+            }
+            override fun onLoginFailed(authException: VKAuthException) {
+                Toast.makeText(this@RegistrationActivity, "Something went wrong", Toast.LENGTH_SHORT).show()
+            }
+        }
+        if (data == null || !VK.onActivityResult(requestCode, resultCode, data, callback)) {
+            super.onActivityResult(requestCode, resultCode, data)
+        }
+    }
+
     inner class TextFieldValidation(private val view: View) : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
@@ -149,6 +235,5 @@ class RegistrationActivity : AppCompatActivity() {
                 R.id.confirm_password -> {validateConfirm_password()}
             }
         }
-
     }
 }
