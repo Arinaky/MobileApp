@@ -37,6 +37,11 @@ class LoginActivity : AppCompatActivity() {
 
         gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build()
         gsc = GoogleSignIn.getClient(this, gso)
+        val acct : GoogleSignInAccount? = GoogleSignIn.getLastSignedInAccount(this)
+
+        if (acct!=null) {
+            toMainPage()
+        }
 
         buttonLogin.setOnClickListener {
             dbHandler = DatabaseHandler(this, null)
