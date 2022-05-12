@@ -119,4 +119,15 @@
 
     </LinearLayout>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/test"
+        android:text="test"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/button_registration"
+        android:layout_margin="@android:dimen/app_icon_size"
+        android:textColor="@color/teal_200"
+        />
+
 </RelativeLayout>

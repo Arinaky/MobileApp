@@ -2,7 +2,6 @@ package com.example.mobileapp
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
@@ -15,6 +14,14 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
+import com.vk.api.sdk.VK
+import com.vk.api.sdk.auth.VKAccessToken
+import com.vk.api.sdk.auth.VKAuthCallback
+import com.vk.api.sdk.auth.VKScope
+import com.vk.api.sdk.exceptions.VKAuthException
+import com.vk.api.sdk.requests.VKRequest
+import com.vk.api.sdk.utils.VKUtils.getCertificateFingerprint
+
 
 class LoginActivity : AppCompatActivity() {
 
@@ -34,12 +41,21 @@ class LoginActivity : AppCompatActivity() {
         val buttonLogin = findViewById<Button>(R.id.button_login)
         val buttonRegistration = findViewById<Button>(R.id.button_registration)
         val buttonGoogle = findViewById<ImageView>(R.id.google_btn)
+        val buttonVK = findViewById<ImageView>(R.id.vk_btn)
+
+        val test = findViewById<TextView>(R.id.test)
+        val fingerprints = getCertificateFingerprint(this, this.packageName)
+        test.text = fingerprints!![0]
 
         gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build()
         gsc = GoogleSignIn.getClient(this, gso)
         val acct : GoogleSignInAccount? = GoogleSignIn.getLastSignedInAccount(this)
 
         if (acct!=null) {
+            toMainPage()
+        }
+
+        if (VK.isLoggedIn()) {
             toMainPage()
         }
 
@@ -79,6 +95,10 @@ class LoginActivity : AppCompatActivity() {
         buttonGoogle.setOnClickListener {
             googleSignIn()
         }
+
+        buttonVK.setOnClickListener {
+            VK.login(this, arrayListOf(VKScope.WALL, VKScope.PHOTOS))
+        }
     }
     fun googleSignIn() {
         val signInIntent : Intent = gsc.signInIntent
@@ -101,6 +121,27 @@ class LoginActivity : AppCompatActivity() {
             } catch (exception : ApiException) {
                 Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show()
             }
+        }
+        val callback = object: VKAuthCallback {
+            override fun onLogin(token: VKAccessToken) {
+                toMainPage()
+                var userExist : Boolean = false
+                for (user in users!!) {
+                    if (user.username == token.userId.toString()) {
+                        userExist = true
+                        break
+                    }
+                }
+                if (!userExist) {
+                    dbHandler!!.insertData(token.userId.toString(), null.toString(), token.email.toString())
+                }
+            }
+            override fun onLoginFailed(authException: VKAuthException) {
+                Toast.makeText(this@LoginActivity, "Something went wrong", Toast.LENGTH_SHORT).show()
+            }
+        }
+        if (data == null || !VK.onActivityResult(requestCode, resultCode, data, callback)) {
+            super.onActivityResult(requestCode, resultCode, data)
         }
     }
 }

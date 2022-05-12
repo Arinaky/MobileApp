@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <integer name="com_vk_sdk_AppId">8164185</integer>
     <string name="sign_in">Sign in!</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
@@ -11,4 +12,5 @@
     <string name="back">Back</string>
     <string name="museumapp">MuseumApp</string>
     <string name="confirm_password">Confirm password</string>
+    <string name="sign_out">Sign out</string>
 </resources>
